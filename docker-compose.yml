@@ -1,0 +1,58 @@
+version: "3.9"
+services:
+  webui:
+    image: khairul169/garage-webui:latest
+    container_name: garage-webui
+    restart: unless-stopped
+    volumes:
+      - ./creds/garage.toml:/etc/garage.toml:ro
+    ports:
+      - 3909:3909
+    environment:
+      API_BASE_URL: "http://artifactory:3903"
+      S3_ENDPOINT_URL: "http://artifactory:3900"
+
+
+  artifactory:
+    container_name: artifactory
+    image: "dxflrs/garage-local:v2.1.0"
+    build:
+      context: .
+      dockerfile: DockerfileGarage
+    ports:
+      - 3902:3902
+      - 3900:3900
+    volumes:
+      - ./creds/garage.toml:/etc/garage.toml
+      - garage_meta:/var/lib/garage/meta
+      - garage_data:/var/lib/garage/data
+
+  # prometheus:
+  #   container_name: prometheus
+  #   hostname: prometheus
+  #   restart: always
+  #   network_mode: "host"
+  #   # ports:
+  #   #   - 9090:9090
+  #   image: "prom/prometheus:v2.50.1"
+  #   volumes:
+  #     - prometheus-volume:/prometheus
+  #     #- ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
+
+  # grafana:
+  #   container_name: grafana
+  #   hostname: grafana
+  #   restart: always
+  #   network_mode: "host"
+  #   # ports:
+  #   #   - 3000:3000
+  #   image: "grafana/grafana-oss:10.0.11"
+  #   volumes:
+  #       - /opt/production-tests/grafana-storage:/var/lib/grafana 
+
+volumes:
+  garage_meta:
+  garage_data:
+#   object-storage-volume:
+#   prometheus-volume:

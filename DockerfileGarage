@@ -1,0 +1,22 @@
+FROM ubuntu:24.04
+
+RUN apt-get update && apt-get install -y \
+    curl \
+    build-essential \
+    git-core \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
+
+ENV PATH="/root/.cargo/bin:${PATH}"
+
+WORKDIR /opt/build
+
+RUN git clone https://git.deuxfleurs.fr/Deuxfleurs/garage.git && cd garage && \
+    git checkout v2.1.0 \
+    && cargo build --release && cp target/release/garage /garage
+
+ENV RUST_BACKTRACE=1
+ENV RUST_LOG=garage=info
+
+CMD [ "/garage", "server"]
