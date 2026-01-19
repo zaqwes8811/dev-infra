@@ -1,0 +1,328 @@
+# Unroll on VPS
+
+1. Vps with ubuntu 22.04
+
+4. Add user
+sudo useradd user
+sudo passwd user
+usermod -aG sudo user
+
+su user
+chsh -s /bin/bash
+
+sudo useradd some_user
+sudo passwd some_user
+sudo usermod -aG sudo some_user
+sudo mkhomedir_helper some_user
+
+
+
+3. apt update
+
+apt upgrade
+
+2. Will be by default For root
+
+
+```
+# sshd fail2bad failed without it
+sudo add-apt-repository ppa:adiscon/v8-devel
+sudo apt-get update
+sudo apt-get install rsyslog
+```
+
+```
+apt install nano net-tools fail2ban openssh-server ufw netcat psmisc chrony
+```
+
+3. Change ssh port
+https://askubuntu.com/questions/1439461/ssh-default-port-not-changing-ubuntu-22-10-and-later
+втроой ответ не сработал - нужен принятый
+после ребута и этот не сработал
+
+https://askubuntu.com/questions/264046/how-to-run-the-ssh-server-on-a-port-other-than-22
+
+sudo nano /etc/ssh/sshd_config
+https://serverfault.com/questions/1159599/how-to-change-the-ssh-server-port-on-ubuntu
+
+sudo systemctl daemon-reload
+sudo service ssh restart
+
+sudo systemctl status sshd
+
+5. Ufw нельзя заблочить докер порты, но остальные можно
+
+TODO() open listening port usen nc and test it
+
+https://selectel.ru/blog/tutorials/how-to-configure-firewall-with-ufw-on-ubuntu-20/
+ufw
+
+sudo ufw status verbose
+
+https://askubuntu.com/questions/283703/ufw-default-deny-incoming-doesnt-work
+
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+sudo ufw allow 37521
+
+sudo ufw enable
+
+#########################################################################
+
+5. Rotate logs for journald
+
+SystemMaxUse=100M
+#SystemMaxFileSize=
+#SystemMaxFiles=100
+user@55617:~/Work/rock-proj-infra$ sudo nano  /etc/systemd/journald.conf
+https://askubuntu.com/questions/1012912/systemd-logs-journalctl-are-too-large-and-slow
+
+ sudo systemctl restart systemd-journald
+
+5. Relogin and install docker
+https://docs.docker.com/engine/install/ubuntu/
+https://timeweb.cloud/tutorials/ubuntu/kak-ustanovit-i-nastroit-ssh-v-ubuntu-22-04
+
+!!! https://askubuntu.com/questions/652556/uncomplicated-firewall-ufw-is-not-blocking-anything-when-using-docker
+
+6. postinstall
+
+7. docker log rotation
+
+May fail fail2ban
+{
+  "log-driver": "local",
+  "log-opts": {
+    "max-size": "10m"
+  }
+}
+
+journald in docker compose
+
+
+8. fail2ban for sshd
+sudo fail2ban-client status sshd
+sudo fail2ban-client status
+sudo systemctl enable fail2ban.service
+sudo systemctl restart fail2ban.service
+
+9. Создать диск из файла
+
+sudo dd if=/dev/zero of=/storage.disk bs=1G count=160
+sudo mkfs.ext4 /storage.disk
+
+sudo mkdir -p /srv/nvme512g/
+sudo mount /storage.disk /srv/nvme512g/
+sudo chmod -R 777 /srv/nvme512g/
+
+10. Автомонтирование
+
+```
+sudo touch /etc/rc.local
+
+sudo nano /etc/rc.local
+
+#!/bin/sh -e
+
+echo "Try to mount"
+mount /storage.disk /srv/nvme512g/
+
+exit 0
+
+// Rights
+sudo chmod +x /etc/rc.local
+
+```
+
+sudo systemctl enable rc-local
+sudo systemctl start rc-local
+sudo systemctl status rc-local
+
+
+// Doesn't work, override troubles
+sudo systemctl cat rc-local.service
+sudo systemctl edit rc-local.service
+
+fill it
+sudo nano /lib/systemd/system/rc-local.service
+
+[Unit]
+Description=/etc/rc.local Compatibility
+Documentation=man:systemd-rc-local-generator(8)
+ConditionFileIsExecutable=/etc/rc.local
+Before=docker.service containerd.service
+
+
+[Service]
+Type=forking
+ExecStart=/etc/rc.local start
+TimeoutSec=0
+RemainAfterExit=yes
+GuessMainPID=no
+
+[Install]
+RequiredBy=docker.service containerd.service
+
+
+
+9. git
+
+10. App env
+sudo ln -s /srv/nvme512g/ /mnt/app_data
+mkdir ~/Work/rock-proj-infra/creds && touch ~/Work/rock-proj-infra/creds/prod.env
+
+nano ~/Work/rock-proj-infra/creds/prod.env
+
+12. Mount using openvpn backup storage
+
+Проблема
+- стартуем на vps и отваливается ssh
+- заходим в vnc vps и ищем айпишник с впн сети
+- заходим с другого компа и работаем в сети впн
+
+[!!!] Alarm
+sudo ufw disable
+sudo openvpn --config ..
+
+
+https://serverfault.com/questions/649792/prevent-ssh-connection-lost-after-logging-into-vpn-on-server-machine
+https://unix.stackexchange.com/questions/124946/ssh-session-through-openvpn-cuts-off-locks-up-after-a-few-lines
+
+
+su   # root passord
+
+openvpn --config Openv.. &
+
+https://askubuntu.com/questions/298419/how-to-disconnect-from-openvpn
+
+killall openvpn
+
+!! reboot will be using 4VPS panel
+
+su user
+
+mkdir ~/backups
+
+sudo mount -t cifs -o username=some_user,uid=$(id -u),gid=$(id -g),forceuid,forcegid //192.168.1.12/backup/backup-redmine-gl-disk/ ~/backups
+
+sudo mount.cifs //192.168.1.12/backup ~/backups
+
+sudo mount -t cifs //192.168.1.12/backup/backup-redmine-gl-disk ~/backups -o username=some_user,iocharset=utf8,file_mode=0777,dir_mode=0777,soft,user,noperm
+
+root for vps
+
+gunzip -c 20250508_200849_blob_bsz_160G-backup.gz | sudo dd of=/storage.disk bs=150M status=progress
+
+TODO() файл после распаковки стал 170Гб, почему так? при бэкаппе фиксировать размер?
+TODO() но после ребута размер нормальный был
+
+
+ребутнуться не смог через панель ребутал
+
+cd ~/backups/backup-redmine-gl-disk/
+
+sudo ufw enable
+
+14. redmine disabe register
+https://www.redmine.org/boards/2/topics/5376
+
+
+13. Flush backup
+
+14. netp cleint
+
+sudo apt install chrony -y
+sudo systemctl enable chrony
+sudo systemctl start chrony
+sudo systemctl status chrony
+sudo timedatectl set-timezone Europe/Moscow
+sudo systemctl status chrony
+
+
+14. Clone app and up
+
+15. fail2ban for redmine and gitlab
+sudo cp fail2ban/redmine.conf /etc/fail2ban/filter.d/
+sudo cp fail2ban/systemd-gitlab.conf /etc/fail2ban/filter.d/
+sudo cp fail2ban/jail.local /etc/fail2ban/jail.local
+
+sudo fail2ban-client reload
+
+sudo journalctl CONTAINER_NAME=redmine
+sudo journalctl CONTAINER_NAME=gitlab.rockthatchip.ru
+
+fail2ban-regex -vvvvv gl_systemd_logs.txt ./systemd-gitlab.conf
+
+sudo fail2ban-client status
+Status
+|- Number of jail:  3
+`- Jail list: gitlab-auth, redmine-auth, sshd
+
+
+16. log rotation for gilab
+https://forum.gitlab.com/t/howto-configure-the-log-rotation-of-the-sidekiq-logs/81748/2
+
+puma!
+
+https://github.com/shamithmc/gitlab-docker/blob/master/doc/settings/logs.md
+
+17. check usage of gitlab
+
+https://stackoverflow.com/questions/47860772/gitlab-remote-http-basic-access-denied-and-fatal-authentication
+
+git config --system --unset credential.helper
+и в новой консоли
+
+# General VPS security
+
+https://help.ovhcloud.com/csm/en-vps-security-tips?id=kb_article_view&sysparm_article=KB0047703
+https://timeweb.cloud/tutorials/servers/nessus-dlya-skanirovaniya-uyazvimostej-v-ubuntu-22-04
+https://www.digitalocean.com/community/tutorials/an-introduction-to-securing-your-linux-vps
+
+TODO() disable root login
+https://docs.redhat.com/en/documentation/Red_Hat_Enterprise_Linux/4/html/Security_Guide/s2-wstation-privileges-noroot.html
+
+https://github.com/akcryptoguy/vps-harden
+
+
+
+# Vps config geneal
+https://selectel.ru/blog/tutorials/how-to-install-and-configure-samba-on-ubuntu-20-04/
+
+# Unpack from backup
+
+1. Unmont
+```
+/dev/nvme1n1p1  469G   28K  445G   1% /srv/nvme512g
+
+sudo umount /srv/nvme512g
+```
+
+2. Burn
+
+```
+gunzip -c ~/20250806_215305_blob_bsz_160G-backup.gz | sudo dd of=/dev/nvme1n1 bs=150M status=progress
+
+sudo mount /dev/nvme1n1 /srv/nvme512g
+```
+
+3. Fit image
+
+```
+1. Resizing the Partition:
+Using parted:
+Identify the disk and partition: sudo parted /dev/sdX print (replace sdX with your disk, e.g., sda).
+If there's free space after the partition, you can resize it.
+To resize the last partition to use all available space: sudo parted -s /dev/sdX resizepart N 100% (replace N with the partition number).
+Alternatively, you can use parted interactively: sudo parted /dev/sdX then use resizepart N and specify the end sector or 100% for maximum size.
+
+
+sudo parted /dev/nvme1n1 print
+
+sudo parted -s /dev/nvme1n1 resizepart 1 100%
+
+sudo mount /dev/nvme1n1 /srv/nvme512g
+
+sudo e2fsck -f /dev/nvme1n1
+sudo resize2fs /dev/nvme1n1
+```
