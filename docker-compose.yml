@@ -69,6 +69,21 @@ services:
     depends_on:
       - jenkins
 
+  gitlab:
+    image: gitlab/gitlab-ce:17.6.5-ce.0
+    container_name: gitlab
+    restart: always
+    hostname: gitlab
+    ports:
+       - '8081:80'
+    volumes:
+      - '../storage/gitlab_home/config:/etc/gitlab'
+      - '../storage/gitlab_home/logs:/var/log/gitlab'
+      - '../storage/gitlab_home/data:/var/opt/gitlab'
+    shm_size: '256m'
+    logging:
+      driver: "journald"
+
 # Warning! docker-compose down looks like remove volumes
 volumes:
   garage_meta:
