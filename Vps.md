@@ -242,3 +242,17 @@ https://unixhost.pro/blog/2025/11/webui-for-garage-s3-server/
 
 
 ```
+
+# Monitoring
+
+1. Start Graphana
+```
+# Need set rights, it's strange
+# TODO() Make lower rights
+mkdir ./storage/grafana
+chmod 0777 ./storage/grafana
+
+# Default user:passwrd - admin:admin
+
+Promethous endpoint: http://prometheus:9090  # Name of host in docker network
+```
