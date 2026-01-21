@@ -274,3 +274,11 @@ https://timeweb.cloud/tutorials/ci-cd/avtomatizaciya-nastrojki-jenkins-s-pomoshc
 mkdir -p ../storage/gitlab_home
 chmod 0777 ../storage/gitlab_home
 ```
+
+# Creating storage file structure
+
+1. From source
+
+```
+./init_storage.sh
+```
