@@ -25,8 +25,8 @@ services:
       - 3900:3900
     volumes:
       - ./creds/garage.toml:/etc/garage.toml
-      - garage_meta:/var/lib/garage/meta
-      - garage_data:/var/lib/garage/data
+      - ../storage/garage/meta:/var/lib/garage/meta
+      - ../storage/garage/data:/var/lib/garage/data
 
   prometheus:
     container_name: prometheus
@@ -55,7 +55,7 @@ services:
       - "8080:8080"
       - "50000:50000"
     volumes:
-      - jenkins_home:/var/jenkins_home
+      - ../storage/jenkins_home:/var/jenkins_home
 
   jenkins-agent:
     image: jenkins/inbound-agent
@@ -65,7 +65,7 @@ services:
       - JENKINS_AGENT_NAME=agent
       - JENKINS_AGENT_WORKDIR=/home/jenkins/agent
     volumes:
-      - agent_workdir:/home/jenkins/agent
+      - agent_workdir:/home/jenkins/agent  # May be volume (?)
     depends_on:
       - jenkins
 
@@ -77,10 +77,10 @@ services:
     ports:
        - '8081:80'
     volumes:
-      - '../storage/gitlab_home/config:/etc/gitlab'
-      - '../storage/gitlab_home/logs:/var/log/gitlab'
-      - '../storage/gitlab_home/data:/var/opt/gitlab'
-    shm_size: '256m'
+      - ../storage/gitlab_home/config:/etc/gitlab
+      - ../storage/gitlab_home/logs:/var/log/gitlab
+      - ../storage/gitlab_home/data:/var/opt/gitlab
+    shm_size: '512m'
     logging:
       driver: "journald"
 
@@ -98,8 +98,8 @@ services:
     #env_file: creds/prod.env
     volumes:
       #- ./additional_environment.rb:/usr/src/redmine/config/additional_environment.rb
-      - redmine-data:/usr/src/redmine/files
-      - redmine-logs:/var/log/redmine
+      - ../storage/redmine-data:/usr/src/redmine/files
+      - ../storage/redmine-logs:/var/log/redmine
     ports:
         - "3001:3000"
     depends_on:
@@ -117,15 +117,9 @@ services:
       POSTGRES_USER: redmine
       POSTGRES_PASSWORD: mysecretpassword
     volumes:
-      - redmine-db:/var/lib/postgresql/data
+      - ../storage/redmine-postgresql-db:/var/lib/postgresql/data
 
 # Warning! docker-compose down looks like remove volumes
 volumes:
-  garage_meta:
-  garage_data:
   prometheus-volume:
-  jenkins_home:
   agent_workdir:
-  redmine-db:
-  redmine-data:
-  redmine-logs:
