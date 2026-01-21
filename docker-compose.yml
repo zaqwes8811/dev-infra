@@ -27,32 +27,27 @@ services:
       - garage_meta:/var/lib/garage/meta
       - garage_data:/var/lib/garage/data
 
-  # prometheus:
-  #   container_name: prometheus
-  #   hostname: prometheus
-  #   restart: always
-  #   network_mode: "host"
-  #   # ports:
-  #   #   - 9090:9090
-  #   image: "prom/prometheus:v2.50.1"
-  #   volumes:
-  #     - prometheus-volume:/prometheus
-  #     #- ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+  prometheus:
+    container_name: prometheus
+    hostname: prometheus
+    restart: always
+    ports:
+      - 9090:9090
+    image: "prom/prometheus:v2.50.1"
+    volumes:
+      - prometheus-volume:/prometheus  # May be volume
 
-
-  # grafana:
-  #   container_name: grafana
-  #   hostname: grafana
-  #   restart: always
-  #   network_mode: "host"
-  #   # ports:
-  #   #   - 3000:3000
-  #   image: "grafana/grafana-oss:10.0.11"
-  #   volumes:
-  #       - /opt/production-tests/grafana-storage:/var/lib/grafana 
+  grafana:
+    container_name: grafana
+    hostname: grafana
+    restart: always
+    ports:
+      - 3000:3000
+    image: "grafana/grafana-oss:10.0.11"
+    volumes:
+        - ./storage/grafana:/var/lib/grafana 
 
 volumes:
   garage_meta:
   garage_data:
-#   object-storage-volume:
-#   prometheus-volume:
+  prometheus-volume:
