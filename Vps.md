@@ -4,7 +4,7 @@
 
 ```
 # For example 10M
-sudo dd if=/dev/zero of=/storage.disk bs=1M count=10
+sudo dd if=/dev/zero of=/storage.disk bs=1G count=1
 sudo mkfs.ext4 /storage.disk
 
 sudo mkdir -p /mnt/pseudo_disk_0/

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-APP_DATA=../storage
+APP_DATA=/mnt/pseudo_disk_0/
 
 mkdir -p $APP_DATA/grafana
 mkdir -p $APP_DATA/jenkins_home
@@ -20,4 +20,5 @@ mkdir -p $APP_DATA/redmine-data
 mkdir -p $APP_DATA/redmine-logs
 
 # TODO() Less rights
-chmod 0777 $APP_DATA -R
+# Set at node creation mounting time
+#chmod 0777 $APP_DATA -R
