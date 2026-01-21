@@ -25,8 +25,8 @@ services:
       - 3900:3900
     volumes:
       - ./creds/garage.toml:/etc/garage.toml
-      - ../storage/garage/meta:/var/lib/garage/meta
-      - ../storage/garage/data:/var/lib/garage/data
+      - /mnt/pseudo_disk_0/garage/meta:/var/lib/garage/meta
+      - /mnt/pseudo_disk_0/garage/data:/var/lib/garage/data
 
   prometheus:
     container_name: prometheus
@@ -46,7 +46,7 @@ services:
       - 3000:3000
     image: "grafana/grafana-oss:10.0.11"
     volumes:
-        - ../storage/grafana:/var/lib/grafana
+        - /mnt/pseudo_disk_0/grafana:/var/lib/grafana
 
   jenkins:
     image: jenkins/jenkins:lts
@@ -55,7 +55,7 @@ services:
       - "8080:8080"
       - "50000:50000"
     volumes:
-      - ../storage/jenkins_home:/var/jenkins_home
+      - /mnt/pseudo_disk_0/jenkins_home:/var/jenkins_home
 
   jenkins-agent:
     image: jenkins/inbound-agent
@@ -77,9 +77,9 @@ services:
     ports:
        - '8081:80'
     volumes:
-      - ../storage/gitlab_home/config:/etc/gitlab
-      - ../storage/gitlab_home/logs:/var/log/gitlab
-      - ../storage/gitlab_home/data:/var/opt/gitlab
+      - /mnt/pseudo_disk_0/gitlab_home/config:/etc/gitlab
+      - /mnt/pseudo_disk_0/gitlab_home/logs:/var/log/gitlab
+      - /mnt/pseudo_disk_0/gitlab_home/data:/var/opt/gitlab
     shm_size: '512m'
     logging:
       driver: "journald"
@@ -98,8 +98,8 @@ services:
     #env_file: creds/prod.env
     volumes:
       #- ./additional_environment.rb:/usr/src/redmine/config/additional_environment.rb
-      - ../storage/redmine-data:/usr/src/redmine/files
-      - ../storage/redmine-logs:/var/log/redmine
+      - /mnt/pseudo_disk_0/redmine-data:/usr/src/redmine/files
+      - /mnt/pseudo_disk_0/redmine-logs:/var/log/redmine
     ports:
         - "3001:3000"
     depends_on:
@@ -117,7 +117,7 @@ services:
       POSTGRES_USER: redmine
       POSTGRES_PASSWORD: mysecretpassword
     volumes:
-      - ../storage/redmine-postgresql-db:/var/lib/postgresql/data
+      - /mnt/pseudo_disk_0/redmine-postgresql-db:/var/lib/postgresql/data
 
 # Warning! docker-compose down looks like remove volumes
 volumes:
