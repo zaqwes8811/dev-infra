@@ -99,8 +99,8 @@ https://garagehq.deuxfleurs.fr/
 mkdir creds
 
 cat > creds/garage.toml <<EOF
-metadata_dir = "/tmp/meta"
-data_dir = "/tmp/data"
+metadata_dir = "/var/lib/garage/meta"
+data_dir = "/var/lib/garage/data"
 db_engine = "sqlite"
 
 replication_factor = 1
