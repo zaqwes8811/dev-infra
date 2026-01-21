@@ -249,10 +249,19 @@ https://unixhost.pro/blog/2025/11/webui-for-garage-s3-server/
 ```
 # Need set rights, it's strange
 # TODO() Make lower rights
-mkdir ./storage/grafana
-chmod 0777 ./storage/grafana
+# Warning! Can't create storage at level of docker-compose.yaml. Build will fail
+mkdir -p ../storage/grafana
+chmod 0777 ../storage/grafana
 
 # Default user:passwrd - admin:admin
 
 Promethous endpoint: http://prometheus:9090  # Name of host in docker network
+```
+
+# Jenkins
+
+1. As part of compose
+
+```
+https://timeweb.cloud/tutorials/ci-cd/avtomatizaciya-nastrojki-jenkins-s-pomoshchyu-docker
 ```

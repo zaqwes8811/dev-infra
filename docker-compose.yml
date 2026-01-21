@@ -11,7 +11,8 @@ services:
     environment:
       API_BASE_URL: "http://artifactory:3903"
       S3_ENDPOINT_URL: "http://artifactory:3900"
-
+    depends_on:
+      - artifactory
 
   artifactory:
     container_name: artifactory
@@ -45,9 +46,33 @@ services:
       - 3000:3000
     image: "grafana/grafana-oss:10.0.11"
     volumes:
-        - ./storage/grafana:/var/lib/grafana 
+        - ../storage/grafana:/var/lib/grafana
 
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins-server
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+
+  jenkins-agent:
+    image: jenkins/inbound-agent
+    container_name: jenkins-agent
+    environment:
+      - JENKINS_URL=http://jenkins-server:8080
+      - JENKINS_AGENT_NAME=agent
+      - JENKINS_AGENT_WORKDIR=/home/jenkins/agent
+    volumes:
+      - agent_workdir:/home/jenkins/agent
+    depends_on:
+      - jenkins
+
+# Warning! docker-compose down looks like remove volumes
 volumes:
   garage_meta:
   garage_data:
   prometheus-volume:
+  jenkins_home:
+  agent_workdir:
