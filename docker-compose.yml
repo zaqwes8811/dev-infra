@@ -84,6 +84,41 @@ services:
     logging:
       driver: "journald"
 
+  # Pseudo Confluence and Jira
+
+  redmine:
+    image: redmine:6.0.4
+    restart: always
+    container_name: redmine
+    environment:
+      REDMINE_DB_POSTGRES: postgres # Hostname matches the postgres service name
+      REDMINE_DB_DATABASE: redmine
+      REDMINE_DB_USERNAME: redmine
+      REDMINE_DB_PASSWORD: mysecretpassword
+    #env_file: creds/prod.env
+    volumes:
+      #- ./additional_environment.rb:/usr/src/redmine/config/additional_environment.rb
+      - redmine-data:/usr/src/redmine/files
+      - redmine-logs:/var/log/redmine
+    ports:
+        - "3001:3000"
+    depends_on:
+      - postgres
+    logging:
+      driver: "journald"
+
+  postgres:
+    image: postgres:17.2
+    restart: always
+    container_name: postgres
+    #env_file: creds/prod.env
+    environment:
+      POSTGRES_DB: redmine
+      POSTGRES_USER: redmine
+      POSTGRES_PASSWORD: mysecretpassword
+    volumes:
+      - redmine-db:/var/lib/postgresql/data
+
 # Warning! docker-compose down looks like remove volumes
 volumes:
   garage_meta:
@@ -91,3 +126,6 @@ volumes:
   prometheus-volume:
   jenkins_home:
   agent_workdir:
+  redmine-db:
+  redmine-data:
+  redmine-logs:
