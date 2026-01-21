@@ -265,3 +265,12 @@ Promethous endpoint: http://prometheus:9090  # Name of host in docker network
 ```
 https://timeweb.cloud/tutorials/ci-cd/avtomatizaciya-nastrojki-jenkins-s-pomoshchyu-docker
 ```
+
+# Gitlab
+
+1. Allocate storage
+
+```
+mkdir -p ../storage/gitlab_home
+chmod 0777 ../storage/gitlab_home
+```
