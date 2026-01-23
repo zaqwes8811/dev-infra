@@ -11,6 +11,7 @@ sudo mkdir -p /mnt/pseudo_disk_0/
 sudo mount /storage.disk /mnt/pseudo_disk_0/
 
 # TODO() Less right 0766 or something like it
+./init_storage.sh
 sudo chmod -R 0777 /mnt/pseudo_disk_0/
 
 # Check list of mounted
@@ -134,8 +135,6 @@ cat creds/garage.toml
 2. Start docker compose
 
 ```
-./init_storage.sh
-
 docker-compose build
 docker-compose up -d
 
