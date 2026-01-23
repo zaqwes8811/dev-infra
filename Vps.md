@@ -134,8 +134,12 @@ cat creds/garage.toml
 2. Start docker compose
 
 ```
+./init_storage.sh
+
 docker-compose build
 docker-compose up -d
+
+# Maybe docker compose <user cmd>
 ```
 
 3. Configure cluster (https://garagehq.deuxfleurs.fr/documentation/quick-start/)
