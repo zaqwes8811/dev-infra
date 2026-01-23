@@ -16,10 +16,11 @@ services:
 
   artifactory:
     container_name: artifactory
-    image: "dxflrs/garage-local:v2.1.0"
-    build:
-      context: .
-      dockerfile: DockerfileGarage
+    #image: "dxflrs/garage-local:v2.1.0"
+    image: "dxflrs/garage:v2.1.0"
+    # build:
+    #   context: .
+    #   dockerfile: DockerfileGarage
     ports:
       - 3902:3902
       - 3900:3900
