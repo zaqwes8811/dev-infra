@@ -299,3 +299,14 @@ chmod 0777 ../storage/gitlab_home
 ```
 ./init_storage.sh
 ```
+
+# Private creds
+
+```
+cp template_creds.env creds/creds.env
+
+# Put own
+
+docker compose down
+docker compose up -d
+```
