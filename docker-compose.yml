@@ -16,12 +16,8 @@ services:
 
   artifactory:
     container_name: artifactory
-    #image: "dxflrs/garage-local:v2.1.0"
     image: "dxflrs/garage:v2.1.0"
     restart: always
-    # build:
-    #   context: .
-    #   dockerfile: DockerfileGarage
     ports:
       - 3902:3902
       - 3900:3900
@@ -54,9 +50,7 @@ services:
     image: jenkins/jenkins:lts-latest
     container_name: jenkins-server
     restart: always
-    # env_file: creds/prod.env  # TODO() Pull creds from env file out of the git
-    environment:
-      - JENKINS_ADMIN_PASSWORD=123  # Setup own
+    env_file: creds/creds.env
     build:
       context: .
       dockerfile: DockerfileJenkins
@@ -70,12 +64,7 @@ services:
     image: jenkins/inbound-agent
     container_name: jenkins-agent
     restart: always
-    # env_file: creds/prod.env  # TODO() Pull creds from env file out of the git
-    environment:
-      - JENKINS_URL=http://jenkins-server:8080
-      - JENKINS_AGENT_NAME=agent
-      - JENKINS_AGENT_WORKDIR=/home/jenkins/agent
-      - JENKINS_SECRET=4488c51aeb5cf3536fcccb1749152cd11e4eb0daa8d6493dc3a6458b6631c29e  # Replace with actual
+    env_file: creds/creds.env
     volumes:
       - agent_workdir:/home/jenkins/agent  # May be volume (?)
     depends_on:
@@ -102,14 +91,8 @@ services:
     image: redmine:6.0.4
     restart: always
     container_name: redmine
-    environment:
-      REDMINE_DB_POSTGRES: postgres # Hostname matches the postgres service name
-      REDMINE_DB_DATABASE: redmine
-      REDMINE_DB_USERNAME: redmine
-      REDMINE_DB_PASSWORD: mysecretpassword
-    #env_file: creds/prod.env
+    env_file: creds/creds.env
     volumes:
-      #- ./additional_environment.rb:/usr/src/redmine/config/additional_environment.rb
       - /mnt/pseudo_disk_0/redmine-data:/usr/src/redmine/files
       - /mnt/pseudo_disk_0/redmine-logs:/var/log/redmine
     ports:
@@ -123,11 +106,7 @@ services:
     image: postgres:17.2
     restart: always
     container_name: postgres
-    #env_file: creds/prod.env
-    environment:
-      POSTGRES_DB: redmine
-      POSTGRES_USER: redmine
-      POSTGRES_PASSWORD: mysecretpassword
+    env_file: creds/creds.env
     volumes:
       - /mnt/pseudo_disk_0/redmine-postgresql-db:/var/lib/postgresql/data
 
