@@ -18,6 +18,7 @@ services:
     container_name: artifactory
     #image: "dxflrs/garage-local:v2.1.0"
     image: "dxflrs/garage:v2.1.0"
+    restart: always
     # build:
     #   context: .
     #   dockerfile: DockerfileGarage
@@ -44,14 +45,21 @@ services:
     hostname: grafana
     restart: always
     ports:
-      - 3000:3000
+      - 3002:3000
     image: "grafana/grafana-oss:10.0.11"
     volumes:
         - /mnt/pseudo_disk_0/grafana:/var/lib/grafana
 
   jenkins:
-    image: jenkins/jenkins:lts
+    image: jenkins/jenkins:lts-latest
     container_name: jenkins-server
+    restart: always
+    # env_file: creds/prod.env  # TODO() Pull creds from env file out of the git
+    environment:
+      - JENKINS_ADMIN_PASSWORD=123  # Setup own
+    build:
+      context: .
+      dockerfile: DockerfileJenkins
     ports:
       - "8080:8080"
       - "50000:50000"
@@ -61,10 +69,13 @@ services:
   jenkins-agent:
     image: jenkins/inbound-agent
     container_name: jenkins-agent
+    restart: always
+    # env_file: creds/prod.env  # TODO() Pull creds from env file out of the git
     environment:
       - JENKINS_URL=http://jenkins-server:8080
       - JENKINS_AGENT_NAME=agent
       - JENKINS_AGENT_WORKDIR=/home/jenkins/agent
+      - JENKINS_SECRET=4488c51aeb5cf3536fcccb1749152cd11e4eb0daa8d6493dc3a6458b6631c29e  # Replace with actual
     volumes:
       - agent_workdir:/home/jenkins/agent  # May be volume (?)
     depends_on:

@@ -267,6 +267,20 @@ Promethous endpoint: http://prometheus:9090  # Name of host in docker network
 
 ```
 https://timeweb.cloud/tutorials/ci-cd/avtomatizaciya-nastrojki-jenkins-s-pomoshchyu-docker
+
+Issues - cli hangs
+Fixed: docker compose down && docker compose build
+
+After login
+Install Suggested
+
+agent name should match agent name from docker-compose
+
+ALARM! Gaps in tutorial
+
+Didn't get what is jenkins.yaml, it isn't create jobs or pipelines
+
+Hello world is okey
 ```
 
 # Gitlab

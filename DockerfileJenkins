@@ -1,0 +1,15 @@
+FROM jenkins/jenkins:lts
+
+RUN jenkins-plugin-cli --plugins workflow-aggregator
+RUN jenkins-plugin-cli --plugins git
+RUN jenkins-plugin-cli --plugins repo
+
+COPY custom_config.xml /var/jenkins_home/config.xml
+
+# TODO() From where?
+#COPY scripts/init.groovy.d /usr/share/jenkins/ref/init.groovy.d/
+
+COPY jenkins.yaml /var/jenkins_home/jenkins.yaml
+
+EXPOSE 8080
+EXPOSE 50000
