@@ -1,0 +1,21 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Hello') {
+            steps {
+                echo 'Hello World'
+                
+                script {
+                    sh '''
+                        touch /tmp/my.txt
+                        echo "Hello" > /tmp/my.txt
+                        aws --version
+                        aws s3 cp /tmp/my.txt s3://nextcloud-bucket/$BUILD_NUMBER.txt
+                    '''
+                }
+                
+            }
+        }
+    }
+}
