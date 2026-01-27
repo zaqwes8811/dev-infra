@@ -11,10 +11,7 @@ COPY jenkins.yaml /var/jenkins_home/jenkins.yaml
 
 USER root
 
-RUN apt update && apt install -y snap awscli
-
-# Doesn't work, snap not found even was intalled above
-#RUN snap install aws-cli --channel=v2/stable --classic
+RUN apt update && apt install -y awscli
 
 USER jenkins
 
