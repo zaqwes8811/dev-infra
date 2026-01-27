@@ -6,10 +6,17 @@ RUN jenkins-plugin-cli --plugins repo
 
 COPY custom_config.xml /var/jenkins_home/config.xml
 
-# TODO() From where?
-#COPY scripts/init.groovy.d /usr/share/jenkins/ref/init.groovy.d/
-
+# TODO() Do we really need it?
 COPY jenkins.yaml /var/jenkins_home/jenkins.yaml
+
+USER root
+
+RUN apt update && apt install -y snap awscli
+
+# Doesn't work, snap not found even was intalled above
+#RUN snap install aws-cli --channel=v2/stable --classic
+
+USER jenkins
 
 EXPOSE 8080
 EXPOSE 50000

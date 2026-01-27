@@ -226,10 +226,13 @@ aws s3 ls
 aws s3 ls s3://nextcloud-bucket
 
 # copy from your filesystem to garage
-aws s3 cp /proc/cpuinfo s3://nextcloud-bucket/cpuinfo.txt
+# Note: Don't use /proc/* as in tutorial, it produce empty files in storage. No content sent
+touch /tmp/my.txt
+echo "Hello" > /tmp/my.txt
+aws s3 cp /tmp/my.txt s3://nextcloud-bucket/
 
 # copy from garage to your filesystem
-aws s3 cp s3://nextcloud-bucket/cpuinfo.txt /tmp/cpuinfo.txt
+aws s3 cp s3://nextcloud-bucket/my.txt /tmp/my-rd.txt
 
 # Enable web for basket. Doesn't work really
 

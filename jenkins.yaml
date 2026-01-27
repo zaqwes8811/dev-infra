@@ -4,7 +4,7 @@ jenkins:
     local:
       allowsSignup: false
       users:
-        - id: "z"  # TODO() Put own or what?
+        - id: "admin"
           password: "${JENKINS_ADMIN_PASSWORD}"
   authorizationStrategy:
     loggedInUsersCanDoAnything:
