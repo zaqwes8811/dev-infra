@@ -61,10 +61,13 @@ services:
       - /mnt/pseudo_disk_0/jenkins_home:/var/jenkins_home
 
   jenkins-agent:
-    image: jenkins/inbound-agent
+    image: jenkins/inbound-agent-local:latest
     container_name: jenkins-agent
     restart: always
     env_file: creds/creds.env
+    build:
+      context: .
+      dockerfile: DockerfileJenkinsAgent
     volumes:
       - agent_workdir:/home/jenkins/agent  # May be volume (?)
     depends_on:

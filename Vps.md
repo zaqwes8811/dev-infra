@@ -201,9 +201,8 @@ RWO          GK801ba4b45db331b4d9181c2c  nextcloud-app-key
 ```
 # Need install in such way really
 
+# No snap in docker. Can't install in jenkins docker image
 sudo snap install aws-cli --channel=v2/stable --classic
-
-python3 -m pip install --user awscli
 
 export AWS_ACCESS_KEY_ID=AAAAAAAA      # put your Key ID here
 export AWS_SECRET_ACCESS_KEY=BBBBBBBB  # put your Secret key here
