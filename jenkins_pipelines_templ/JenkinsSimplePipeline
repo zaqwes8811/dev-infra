@@ -8,6 +8,7 @@ pipeline {
                 
                 script {
                     sh '''
+                        docker info
                         touch /tmp/my.txt
                         echo "Hello" > /tmp/my.txt
                         aws --version

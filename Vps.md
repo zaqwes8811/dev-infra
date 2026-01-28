@@ -312,3 +312,18 @@ cp template_creds.env creds/creds.env
 docker compose down
 docker compose up -d
 ```
+
+# Docker from docker
+
+```
+https://community.jenkins.io/t/jenkins-under-docker-with-v-var-run-docker-sock-var-run-docker-sock-permission-denied/1050/2
+https://community.jenkins.io/t/jenkins-unable-to-use-docker-agent-in-pipeline/11196/5
+https://superuser.com/questions/1428856/docker-in-docker-jenkins-on-ubuntu-permission-issue-with-docker-sock
+
+Magic: user from host machine
+
+sudo gpasswd -a $USER docker
+sudo setfacl -m user:$USER:rw /var/run/docker.sock
+
+It works somehow
+```
