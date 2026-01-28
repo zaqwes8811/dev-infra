@@ -1,17 +1,6 @@
-FROM jenkins/jenkins:lts
-
-RUN jenkins-plugin-cli --plugins workflow-aggregator
-RUN jenkins-plugin-cli --plugins git
-RUN jenkins-plugin-cli --plugins repo
-RUN jenkins-plugin-cli --plugins docker-plugin
-
-COPY custom_config.xml /var/jenkins_home/config.xml
-
-# TODO() Do we really need it?
-COPY jenkins.yaml /var/jenkins_home/jenkins.yaml
+FROM jenkins/inbound-agent:latest
 
 USER root
-
 RUN apt-get update
 RUN apt install ca-certificates curl gnupg lsb-release -y
 RUN install -m 0755 -d /etc/apt/keyrings
@@ -24,6 +13,3 @@ RUN apt update && apt install -y awscli docker-ce docker-ce-cli
 RUN usermod -aG docker jenkins
 
 USER jenkins
-
-EXPOSE 8080
-EXPOSE 50000
