@@ -1,0 +1,35 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo "Hi"
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/armbian/build.git']]])
+            }
+        }
+        stage('Hello') {
+            steps {
+                echo 'Hello World'
+                
+                script {
+                    sh '''
+                        docker info
+                        touch /tmp/my.txt
+                        echo "Hello" > /tmp/my.txt
+                        aws --version
+                        #aws s3 cp /tmp/my.txt s3://nextcloud-bucket/$BUILD_NUMBER.txt
+                    '''
+                    
+                    sh '''#!/bin/bash
+                        ./compile.sh BOARD=nanopi-r5c BRANCH=edge KERNEL_BTF=no \
+                        BUILD_MINIMAL=yes \
+                        BUILD_DESKTOP=no \
+                        KERNEL_CONFIGURE=no
+                    '''
+                }
+                
+            }
+        }
+    }
+}

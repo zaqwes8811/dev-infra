@@ -66,14 +66,22 @@ services:
     container_name: jenkins-agent
     restart: always
     env_file: creds/creds.env
+    #privileged: true  # Break docker.sock access
     build:
       context: .
       dockerfile: DockerfileJenkinsAgent
     volumes:
-      - agent_workdir:/home/jenkins/agent  # May be volume (?)
+      - /mnt/big_disk/workspace_agent_0:/home/jenkins/agent  # May be volume (?)
       - /var/run/docker.sock:/var/run/docker.sock  # Mount socket
     depends_on:
       - jenkins
+
+    # TODO() Can't start like this
+    # Use with caution: still grants significant access
+    # cap_add:
+    #   - SYS_ADMIN 
+    # devices:
+    #   - /dev:/dev # Mount the entire dev directory
 
   gitlab:
     image: gitlab/gitlab-ce:17.6.5-ce.0
@@ -118,4 +126,3 @@ services:
 # Warning! docker-compose down looks like remove volumes
 volumes:
   prometheus-volume:
-  agent_workdir:
