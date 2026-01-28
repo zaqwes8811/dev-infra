@@ -327,3 +327,48 @@ sudo setfacl -m user:$USER:rw /var/run/docker.sock
 
 It works somehow
 ```
+
+# Big disk to build agent
+
+```
+sudo mkdir /mnt/big_disk/workspace_agent_0
+sudo chmod 0777 /mnt/big_disk/workspace_agent_0 -R
+
+```
+
+# Build Armbian. Loop devices troubles for in docker agent
+
+```
+
+[Alarm!] Need host system 24.04 and above
+
+sudo apt install openjdk-17-jdk-headless
+
+sudo update-alternatives --config java
+sudo update-alternatives --config javac
+
+curl -sO http://localhost:8080/jnlpJars/agent.jar
+java -jar agent.jar -url http://localhost:8080/ -secret XXXXXXXXXXXXXXXXXX -name nodocker -webSocket -workDir "/mnt/big_disk/workspace_agent_1"
+
+Error response from daemon: client version 1.43 is too old. Minimum supported API version is 1.44, please upgrade your client to a newer version: driver not connecting
+
+mkdir -p /mnt/big_disk/workspace_agent_1
+./run_nondocker_agent.sh
+
+export DISTRO=$(lsb_release -c | cut -d: -f2 | sed 's/^[ \t]*//')
+
+sudo curl --progress-bar --proto '=https' --tlsv1.2 -Sf https://repo.waydro.id/waydroid.gpg --output /usr/share/keyrings/waydroid.gpg
+
+
+/etc/apt/sources.list.d/waydroid.list
+
+sudo rm  /etc/apt/sources.list.d/pgadmin4.list*
+
+apt-key adv --refresh-keys --keyserver keyserver.ubuntu.com
+
+# Need for new Armbian bild
+sudo ./compile.sh requirements
+
+./compile.sh BOARD=nanopi-r5c BRANCH=current RELEASE=noble KERNEL_BTF=no BUILD_MINIMAL=yes BUILD_DESKTOP=no \
+                        KERNEL_CONFIGURE=no
+```
