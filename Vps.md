@@ -336,10 +336,10 @@ sudo chmod 0777 /mnt/big_disk/workspace_agent_0 -R
 
 ```
 
-# Build Armbian. Loop devices troubles for in docker agent
+# Build Armbian. Loop devices troubles for in docker agent (Optional)
 
 ```
-
+1. (Not working) On own host
 [Alarm!] Need host system 24.04 and above
 
 sudo apt install openjdk-17-jdk-headless
@@ -369,6 +369,80 @@ apt-key adv --refresh-keys --keyserver keyserver.ubuntu.com
 # Need for new Armbian bild
 sudo ./compile.sh requirements
 
+export DOCKER_API_VERSION=1.44  #????
+
+sudo apt install qemu-system
+
+# Download and run the QEMU registration script
+wget https://github.com/qemu/qemu/raw/master/scripts/qemu-binfmt-conf.sh
+chmod +x qemu-binfmt-conf.sh
+sudo ./qemu-binfmt-conf.sh --qemu-path /usr/bin --qemu-suffix -static --debian
+# Then attempt to import the specific format
+sudo update-binfmts --import qemu-loongarch64
+
+./compile.sh requirements  # FAILED
+
 ./compile.sh BOARD=nanopi-r5c BRANCH=current RELEASE=noble KERNEL_BTF=no BUILD_MINIMAL=yes BUILD_DESKTOP=no \
                         KERNEL_CONFIGURE=no
+                        
+
+2. (Working) Special agent on Vagrant
+
+sudo apt install vagrant
+
+May need:
+
+sudo apt purge lvm2 
+sudo apt install lvm2 
+
+https://github.com/chef/bento
+
+Download by hand and
+
+https://github.com/alvistack/vagrant-ubuntu
+
+from browser with VPN
+
+https://vagrantcloud.com/alvistack/boxes/ubuntu-25.10/versions/20260111.1.1/providers/virtualbox/amd64/vagrant.box
+
+Move file to here, name may change
+
+# Choose shared adapter
+ifconfig # On host
+
+# For host access need some thing like this - for example
+wlp82s0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.0.2  netmask 255.255.255.0  broadcast 192.168.0.255
+
+vagrant box add alvistack/ubuntu-25.10 ./f14d580c-ef35-11f0-adc8-b2f692dae68f
+vagrant up  # Ask about interface, choose wifi or another physical of host, need for future, in example - wlp82s0
+vagrant ssh
+vagrant destroy --force #(Optional)
+
+stop vm before Vagrantfile edition
+
+# Docker in vagrant
+
+https://stackoverflow.com/questions/47415732/best-way-to-install-docker-on-vagrant - Not working
+
+From inside
+
+sudo apt update
+sudo apt install docker.io net-tools qemu-user default-jre
+
+# docker postinstall
+
+# Varant access docker compose
+
+# Need share real interface
+sudo mkdir /mnt/big_disk
+sudo mkdir /mnt/big_disk
+sudo chmod 0777 /mnt/big_disk -R
+
+export AGENT_SECRET=xxxxx
+curl -sO http://192.168.0.2:8080/jnlpJars/agent.jar  # Pull agent from docker
+java -jar agent.jar -url http://192.168.0.2:8080/ -secret $AGENT_SECRET -name nodocker -webSocket -workDir "/mnt/big_disk/workspace_agent_1"
+
+if space of /tmp or disk will be small Jenkins drop this node
+
 ```

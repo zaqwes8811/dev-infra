@@ -17,7 +17,7 @@ pipeline {
                         docker info
                         touch /tmp/my.txt
                         echo "Hello" > /tmp/my.txt
-                        aws --version
+                        #aws --version
                         #aws s3 cp /tmp/my.txt s3://nextcloud-bucket/$BUILD_NUMBER.txt
                     '''
                     
@@ -25,6 +25,8 @@ pipeline {
                         ./compile.sh BOARD=nanopi-r5c BRANCH=edge KERNEL_BTF=no \
                         BUILD_MINIMAL=yes \
                         BUILD_DESKTOP=no \
+                        RELEASE=noble \
+                        KERNEL_GIT=shallow \
                         KERNEL_CONFIGURE=no
                     '''
                 }
