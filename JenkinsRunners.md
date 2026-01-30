@@ -3,13 +3,15 @@
 
 2. Create agent and set workspace path to `/vagrant/data`
 
-3. Create work folder
+3. Create shared work folder
 
 ```
 sudo mkdir -p /mnt/big_disk/workspace_agent_vm0
 sudo chmod 0777 /mnt/big_disk/workspace_agent_vm0 -R
 sudo mkdir -p /mnt/big_disk/workspace_agent_vm0/data
 sudo chmod 0777 /mnt/big_disk/workspace_agent_vm0/data/ -R
+
+not for agent, too much troubles with git
 ```
 
 4. Install `vagrant` and `virtualbox`
@@ -116,23 +118,16 @@ docker run hello-world
 
 10. Start jenkins agent by hand for now
 ```
-# TODO() Doesn't work really
-#cd /vagrant/data
-#sudo chown vagrant:vagrant .
-
-# Only helps for Armbian builds
-
-agent folder
-/home/vagrant/code/data
-
-export GIT_DISABLE_UNSAFE_DIRECTORIES=1
+agent work folder
+Warning! It inside of vm, non shared folder. Too much troubles with it
+/home/vagrant/
 
 curl -sO http://192.168.0.6:8080/jnlpJars/agent.jar  # Pull agent from docker, ip of interface below
 
 export AGENT_SECRET=4ace2b1d322554f02325e3fe29b60d3c5b74f2d691bbdac4366fe63fbe3d5990
-java -jar agent.jar -url http://192.168.0.2:8080/ -secret $AGENT_SECRET -name nodocker -webSocket -workDir "/vagrant/data"
+java -jar agent.jar -url http://192.168.0.2:8080/ -secret $AGENT_SECRET -name nodocker -webSocket -workDir "/home/vagrant/"
 
-java -jar agent.jar -url http://192.168.0.6:8080/ -secret 4ace2b1d322554f02325e3fe29b60d3c5b74f2d691bbdac4366fe63fbe3d5990 -name nondocker -webSocket -workDir "/vagrant/data"
+java -jar agent.jar -url http://192.168.0.6:8080/ -secret 4ace2b1d322554f02325e3fe29b60d3c5b74f2d691bbdac4366fe63fbe3d5990 -name nondocker -webSocket -workDir "/home/vagrant/"
 
 ```
 
