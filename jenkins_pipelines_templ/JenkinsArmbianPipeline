@@ -22,6 +22,7 @@ pipeline {
                     '''
                     
                     sh '''#!/bin/bash
+                        export GIT_DISABLE_UNSAFE_DIRECTORIES=1
                         ./compile.sh BOARD=nanopi-r5c BRANCH=edge KERNEL_BTF=no \
                         BUILD_MINIMAL=yes \
                         BUILD_DESKTOP=no \

@@ -2,13 +2,13 @@ Vagrant.configure("2") do |config|
   config.vm.box = "alvistack/ubuntu-25.10"
   config.vm.box_check_update = false
 
-  # TODO() Doesn't work need VPN?
-  # require plugin https://github.com/leighmcculloch/vagrant-docker-compose
-  #config.vagrant.plugins = "vagrant-docker-compose"
+  # Fix some git troubles
+  config.vm.synced_folder ".", "/home/vagrant/code"
 
-  # install docker and docker-compose
-  #config.vm.provision :docker
-  #config.vm.provision :docker_compose
+  config.vm.provision "shell", inline: <<-SHELL
+    echo "none /tmp tmpfs size=2G 0 0" >> /etc/fstab
+    mount -o remount /tmp
+  SHELL
 
   config.vm.provider "virtualbox" do |vb|
     # имя виртуальной машины
@@ -16,15 +16,10 @@ Vagrant.configure("2") do |config|
     # объем оперативной памяти
     vb.memory = 2048
     # количество ядер процессора
-    vb.cpus = 2
+    vb.cpus = 4
   end
   
   # hostname виртуальной машины
   config.vm.hostname = "ubuntu-25.10-test"
-  config.vm.network "public_network" # select wifi
-    #config.vm.network "private_network", type: "dhcp"  # Failed at start
-
-  # TODO() Export ports
-#   config.vm.network "forwarded_port", guest: 8082, host: 8080
-#   config.vm.network "forwarded_port", guest: 3909, host: 3909
+  config.vm.network "public_network", bridge: "wlo1"
 end
