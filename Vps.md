@@ -13,6 +13,7 @@ sudo mount /storage.disk /mnt/pseudo_disk_0/
 # TODO() Less right 0766 or something like it
 ./init_storage.sh
 sudo chmod -R 0777 /mnt/pseudo_disk_0/
+sudo chmod -R 0777 /mnt/pseudo_disk_0/grafana/
 
 # Check list of mounted
 df -h | grep pseudo_disk_0
