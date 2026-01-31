@@ -9,3 +9,5 @@ ls /mnt/pseudo_disk_0/
 rm -rf /mnt/pseudo_disk_0/jenkins_home
 mkdir /mnt/pseudo_disk_0/jenkins_home
 ```
+
+3. Jenkins can start even was stopped

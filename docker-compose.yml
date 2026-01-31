@@ -49,7 +49,7 @@ services:
   jenkins:
     image: jenkins/jenkins:lts-latest
     container_name: jenkins-server
-    restart: always
+    restart: unless-stopped
     env_file: creds/creds.env
     build:
       context: .
@@ -64,10 +64,18 @@ services:
   gitlab:
     image: gitlab/gitlab-ce:17.6.5-ce.0
     container_name: gitlab
-    restart: always
+    restart: unless-stopped
     hostname: gitlab
     ports:
        - '8081:80'
+
+    # environment:
+    #   # Disable Puma
+    #   GITLAB_OMNIBUS_CONFIG: |
+    #     puma['enable'] = false
+    #     # Enable other web server if needed
+    #     # unicorn['enable'] = true  # GitLab < 14.0
+    #     # gitlab_workhorse['enable'] = false
     volumes:
       - /mnt/pseudo_disk_0/gitlab_home/config:/etc/gitlab
       - /mnt/pseudo_disk_0/gitlab_home/logs:/var/log/gitlab
