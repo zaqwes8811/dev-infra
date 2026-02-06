@@ -1,4 +1,4 @@
-# пройти все шаги из Vm.md до configure Cluster (done)
+# 1 - пройти все шаги из Vm.md до configure Cluster (done)
 
 File as disk
 
@@ -75,3 +75,18 @@ df -h | grep pseudo_disk_0
 
 # Give something like this
 /dev/loop18     5.4M  152K  4.6M   4% /mnt/pseudo_disk_0  # Loop device
+
+
+# 2 - installing docker
+
+# make folder
+mkdir creds
+
+# copy creds
+cp template_creds.env creds/creds.env
+
+# build docker
+docker compose build
+
+# load docker
+docker compose up -d
