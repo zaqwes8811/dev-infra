@@ -14,6 +14,10 @@ chmod 600 ~/.netrc
 # Check
 git ls-remote https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME
 
+# Setup git user
+git config --global user.name "Ваше Имя"
+git config --global user.email "ваш-email@example.com"
+
 # 2 - Prepare local pc to deploy infra
 
 # Setup Git
