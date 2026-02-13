@@ -3,8 +3,8 @@
 1. Create file and fill with zeros
 
 ```
-# For example 10M
-sudo dd if=/dev/zero of=/storage.disk bs=1G count=1
+# For example 10G
+sudo dd if=/dev/zero of=/storage.disk bs=10G count=1
 sudo mkfs.ext4 /storage.disk
 
 sudo mkdir -p /mnt/pseudo_disk_0/
@@ -13,7 +13,7 @@ sudo mount /storage.disk /mnt/pseudo_disk_0/
 # TODO() Less right 0766 or something like it
 ./init_storage.sh
 sudo chmod -R 0777 /mnt/pseudo_disk_0/
-sudo chmod -R 0777 /mnt/pseudo_disk_0/grafana/
+sudo chmod -R 0777 /mnt/pseudo_disk_0/grafana/ # chmod: cannot acces
 
 # Check list of mounted
 df -h | grep pseudo_disk_0
@@ -32,7 +32,7 @@ sudo chmod +x /etc/rc.local
 sudo nano /etc/rc.local
 
 
-# Fill with
+# Fill "rc.local" with
 
 #!/bin/sh -e
 
@@ -61,7 +61,7 @@ RemainAfterExit=yes
 GuessMainPID=no
 
 [Install]
-RequiredBy=docker.service containerd.service
+RequiredBy=docker.service containerd.service # add this two lines mannualyy if not added
 ```
 
 ```
@@ -142,7 +142,7 @@ docker-compose up -d
 # Maybe docker compose <user cmd>
 ```
 
-3. Configure cluster (https://garagehq.deuxfleurs.fr/documentation/quick-start/)
+3.1 Configure cluster (https://garagehq.deuxfleurs.fr/documentation/quick-start/)
 
 ```
 # Run commands from outside of docker

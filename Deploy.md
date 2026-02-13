@@ -1,93 +1,37 @@
-# 1 - пройти все шаги из Vm.md до configure Cluster (done)
+# 1 - sing up/in  github.com
 
-File as disk
+#  go to Profile Settings -> Developer settings -> Personal access tokens -> Tokens (classic) -> Generate new token -> Save token
+# open Ubuntu terminal, create ~.netrc and fill it with login and passsword(token)
+nano ~/.netrc
 
-    Create file and fill with zeros
+machine github.com
+    login YOUR_GITHUB_USERNAME
+    password YOUR_GENERATED_TOKEN
 
-# For example 10M
-sudo dd if=/dev/zero of=/storage.disk bs=1G count=1
-sudo mkfs.ext4 /storage.disk
+# Restrict acces to ~.netrc
+chmod 600 ~/.netrc
 
-sudo mkdir -p /mnt/pseudo_disk_0/
-sudo mount /storage.disk /mnt/pseudo_disk_0/
+# Check
+git ls-remote https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME
 
-# TODO() Less right 0766 or something like it
-./init_storage.sh
-sudo chmod -R 0777 /mnt/pseudo_disk_0/
-sudo chmod -R 0777 /mnt/pseudo_disk_0/grafana/
+# 2 - Prepare local pc to deploy infra
 
-# Check list of mounted
-df -h | grep pseudo_disk_0
+# Setup Git
+sudo apt install git
 
-# Give something like this
-/dev/loop18     5.4M  152K  4.6M   4% /mnt/pseudo_disk_0  # Loop device
+# Setup Sublime
+sudo snap install sublime-text --classic
 
-    Auto-mounting
+# Clone repository
+git clone https://github.com/<username>/<name-repository>
 
-# Create rc.local if not exist
-sudo touch /etc/rc.local
-sudo chmod +x /etc/rc.local
+# Setup Docker by using official manual
+https://docs.docker.com/engine/install/ubuntu/
 
-sudo nano /etc/rc.local
+# Proceed post-installation steps for Docker Engine
+https://docs.docker.com/engine/install/linux-postinstall/
 
+# 3 - Unroll on VPS. By using vps.md proceed steps from first up to "S3 Storage"
 
-# Fill with
-
-#!/bin/sh -e
-
-echo "Try to mount"
-mount /storage.disk /mnt/pseudo_disk_0/
-
-exit 0
-
-# Fill systemctl job
-sudo nano /lib/systemd/system/rc-local.service
-
-[Unit]
-Description=/etc/rc.local Compatibility
-Documentation=man:systemd-rc-local-generator(8)
-ConditionFileIsExecutable=/etc/rc.local
-Before=docker.service containerd.service
-
-
-[Service]
-Type=forking
-ExecStart=/etc/rc.local start
-TimeoutSec=0
-RemainAfterExit=yes
-GuessMainPID=no
-
-[Install]
-RequiredBy=docker.service containerd.service
-
-# Umount
-sudo umount /mnt/pseudo_disk_0/
-
-# Enable systemctl job
-sudo systemctl daemon-reload
-sudo systemctl enable rc-local
-sudo systemctl start rc-local
-sudo systemctl status rc-local
-
-    Reboot and check
-
-df -h | grep pseudo_disk_0
-
-# Give something like this
-/dev/loop18     5.4M  152K  4.6M   4% /mnt/pseudo_disk_0  # Loop device
-
-
-# 2 - installing docker
-
-# make folder
-mkdir creds
-
-# copy creds
-cp template_creds.env creds/creds.env
-
-# build docker
-docker compose build
-
-# load docker
-docker compose up -d
-
+# 4 - Setup Jenkins by using this tutorial
+https://timeweb.cloud/tutorials/ci-cd/avtomatizaciya-nastrojki-jenkins-s-pomoshchyu-docker
