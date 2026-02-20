@@ -16,7 +16,7 @@ sudo mount /storage.disk /mnt/pseudo_disk_0/
 # TODO() Less right 0766 or something like it
 ./init_storage.sh 
 sudo chmod -R 0777 /mnt/pseudo_disk_0/
-sudo chmod -R 0777 /mnt/pseudo_disk_0/grafana/ # chmod: cannot acces
+sudo chmod -R 0777 /mnt/pseudo_disk_0/grafana/
 
 # Check list of mounted
 df -h | grep pseudo_disk_0
@@ -28,14 +28,14 @@ df -h | grep pseudo_disk_0
 2. Auto-mounting
 
 ```
-# Create rc.local if not exist
+# Create `rc.local` if not exist
 sudo touch /etc/rc.local
 sudo chmod +x /etc/rc.local
 
 sudo nano /etc/rc.local
 
 
-# Fill "rc.local" with
+# Fill `rc.local` with
 
 #!/bin/sh -e
 
@@ -134,10 +134,6 @@ cat creds/garage.toml
 docker-compose build
 docker-compose up -d
 ```
-
-# 
-
-Maybe docker compose <user cmd>
 
 # S3 storage
 

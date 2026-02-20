@@ -5,8 +5,8 @@
 nano ~/.netrc
 
 machine github.com
-    login YOUR_GITHUB_USERNAME
-    password YOUR_GENERATED_TOKEN
+login YOUR_GITHUB_USERNAME
+password YOUR_GENERATED_TOKEN
 
 # Restrict acces to ~.netrc
 chmod 600 ~/.netrc
@@ -41,7 +41,7 @@ https://docs.docker.com/engine/install/linux-postinstall/
 
 # 4 - Create `creds/creds.env`
 
-# 5 -Create creds Creds for `Garage`
+# 5 - Create creds for `Garage`
 
 # 6 - Start Docker compose app
 `docker compose build`
