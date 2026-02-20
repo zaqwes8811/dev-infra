@@ -5,3 +5,6 @@ sudo dd if=/dev/zero of=/storage.disk bs=1G count=1
 
 типа
 sudo dd if=/dev/zero of=/storage.disk bs=10G count=1	
+
+# полезная прога для отображения древа в терминале
+sudo apt install info tree

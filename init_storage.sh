@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -e
+set -x
+
 APP_DATA=/mnt/pseudo_disk_0/
 
 mkdir -p $APP_DATA/grafana

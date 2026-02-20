@@ -1,17 +1,20 @@
+# Go to project directory
+`cd dev-infra`
+
 # File as disk
 
 1. Create file and fill with zeros
 
 ```
 # For example 10G
-sudo dd if=/dev/zero of=/storage.disk bs=10G count=1
+sudo dd if=/dev/zero of=/storage.disk bs=1G count=10
 sudo mkfs.ext4 /storage.disk
 
 sudo mkdir -p /mnt/pseudo_disk_0/
 sudo mount /storage.disk /mnt/pseudo_disk_0/
 
 # TODO() Less right 0766 or something like it
-./init_storage.sh
+./init_storage.sh 
 sudo chmod -R 0777 /mnt/pseudo_disk_0/
 sudo chmod -R 0777 /mnt/pseudo_disk_0/grafana/ # chmod: cannot acces
 
@@ -84,22 +87,14 @@ df -h | grep pseudo_disk_0
 /dev/loop18     5.4M  152K  4.6M   4% /mnt/pseudo_disk_0  # Loop device
 ```
 
-# S3 storage
-
-1. Select package
+4. Create `creds/creds.env`
 ```
-Variant:
-https://github.com/minio/minio - Community Edition version was hardly cut by functionality
-But: https://habr.com/ru/companies/ruvds/articles/981790/
-
-Variant:
-https://garagehq.deuxfleurs.fr/
-
-# Need run like this, in order to openssl generates keys
-# No need to store into git
-
 mkdir creds
+cp template_creds.env creds/creds.env
+```
 
+5. Creds for `Garage`
+```
 cat > creds/garage.toml <<EOF
 metadata_dir = "/var/lib/garage/meta"
 data_dir = "/var/lib/garage/data"
@@ -133,13 +128,35 @@ EOF
 # Check what was generated
 cat creds/garage.toml
 ```
-2. Start docker compose
+6. Start docker compose
 
 ```
 docker-compose build
 docker-compose up -d
+```
 
-# Maybe docker compose <user cmd>
+# 
+
+Maybe docker compose <user cmd>
+
+# S3 storage
+
+1. Select package
+```
+Variant:
+https://github.com/minio/minio - Community Edition version was hardly cut by functionality
+But: https://habr.com/ru/companies/ruvds/articles/981790/
+
+Variant:
+https://garagehq.deuxfleurs.fr/
+
+# Need run like this, in order to openssl generates keys
+# No need to store into git
+
+mkdir creds
+
+
+
 ```
 
 3.1 Configure cluster (https://garagehq.deuxfleurs.fr/documentation/quick-start/)
@@ -284,33 +301,5 @@ ALARM! Gaps in tutorial
 Didn't get what is jenkins.yaml, it isn't create jobs or pipelines
 
 Hello world is okey
-```
-
-# Gitlab
-
-1. Allocate storage
-
-```
-mkdir -p ../storage/gitlab_home
-chmod 0777 ../storage/gitlab_home
-```
-
-# Creating storage file structure
-
-1. From source
-
-```
-./init_storage.sh
-```
-
-# Private creds
-
-```
-cp template_creds.env creds/creds.env
-
-# Put own
-
-docker compose down
-docker compose up -d
 ```
 
