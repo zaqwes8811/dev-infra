@@ -1,0 +1,50 @@
+1 - BUG - Unroll on VPS. Cannot create 10gb disk. system create only 2gb disk
+
+
+2 - Устройство: # System Details Report
+---
+## Report details
+- **Date generated:**                              2026-02-13 21:08:57
+
+## Hardware Information:
+- **Hardware Model:**                              Acer Aspire V3-371
+- **Memory:**                                      16.0 GiB
+- **Processor:**                                   Intel® Core™ i3-4005U × 4
+- **Graphics:**                                    Intel® HD Graphics 4400 (HSW GT2)
+- **Disk Capacity:**                               480.1 GB
+
+## Software Information:
+- **Firmware Version:**                            V1.32
+- **OS Name:**                                     Ubuntu 24.04.3 LTS
+- **OS Build:**                                    (null)
+- **OS Type:**                                     64-bit
+- **GNOME Version:**                               46
+- **Windowing System:**                            Wayland
+- **Kernel Version:**                              Linux 6.14.0-27-generic
+
+
+3 - Steps:
+
+Step # 3 - Unroll on VPS. 
+open vps.md
+step - File as Disk 
+1. Create file and fill with zeros
+
+# executed commands in terminal
+
+sudo dd if=/dev/zero of=/storage.disk bs=10G count=1
+sudo mkfs.ext4 /storage.disk
+
+sudo mkdir -p /mnt/pseudo_disk_0/
+sudo mount /storage.disk /mnt/pseudo_disk_0/
+
+# Check list of mounted
+df -h | grep pseudo_disk_0
+
+
+4 - expected:
+/dev/loop20     10.0G   24K  9.9G   1% /mnt/pseudo_disk_0 # kind of
+
+5 - result:
+/dev/loop20     2.0G   24K  1.9G   1% /mnt/pseudo_disk_0
+

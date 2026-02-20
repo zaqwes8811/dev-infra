@@ -2,20 +2,35 @@ pipeline {
     agent any
 
     stages {
-        stage('Hello') {
+        stage('Build') {
             steps {
                 echo 'Hello World'
                 
                 script {
                     sh '''
-                        docker info
+                       # docker info
                         touch /tmp/my.txt
                         echo "Hello" > /tmp/my.txt
-                        aws --version
-                        aws s3 cp /tmp/my.txt s3://nextcloud-bucket/$BUILD_NUMBER.txt
+                        # aws --version
+                        # aws s3 cp /tmp/my.txt s3://nextcloud-bucket/$BUILD_NUMBER.txt
                     '''
                 }
+            }
+        }
+        
+        stage('Test') {
+            steps {
+                echo 'Hello World'
                 
+                script {
+                    sh '''
+                       # docker info
+                        touch /tmp/my.txt
+                        echo "Hello" > /tmp/my.txt
+                        # aws --version
+                        # aws s3 cp /tmp/my.txt s3://nextcloud-bucket/$BUILD_NUMBER.txt
+                    '''
+                }
             }
         }
     }
