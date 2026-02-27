@@ -1,3 +1,4 @@
+version: "3.9"
 services:
   webui:
     image: khairul169/garage-webui:latest
@@ -33,7 +34,7 @@ services:
       - 9090:9090
     image: "prom/prometheus:v2.50.1"
     volumes:
-      - prometheus-volume:/prometheus
+      - prometheus-volume:/prometheus  # May be volume
 
   grafana:
     container_name: grafana
@@ -58,7 +59,7 @@ services:
       - "50000:50000"
     volumes:
       - /mnt/pseudo_disk_0/jenkins_home:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock # Mount socket
 
   gitlab:
     image: gitlab/gitlab-ce:17.6.5-ce.0
@@ -67,6 +68,14 @@ services:
     hostname: gitlab
     ports:
        - '8081:80'
+
+    # environment:
+    #   # Disable Puma
+    #   GITLAB_OMNIBUS_CONFIG: |
+    #     puma['enable'] = false
+    #     # Enable other web server if needed
+    #     # unicorn['enable'] = true  # GitLab < 14.0
+    #     # gitlab_workhorse['enable'] = false
     volumes:
       - /mnt/pseudo_disk_0/gitlab_home/config:/etc/gitlab
       - /mnt/pseudo_disk_0/gitlab_home/logs:/var/log/gitlab
@@ -74,6 +83,8 @@ services:
     shm_size: '512m'
     logging:
       driver: "journald"
+
+  # Pseudo Confluence and Jira
 
   redmine:
     image: redmine:6.0.4
@@ -86,8 +97,7 @@ services:
     ports:
         - "3001:3000"
     depends_on:
-      postgres:
-        condition: service_healthy
+      - postgres
     logging:
       driver: "journald"
 
@@ -98,60 +108,7 @@ services:
     env_file: creds/creds.env
     volumes:
       - /mnt/pseudo_disk_0/redmine-postgresql-db:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U redmine"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - default
-      - xwiki-network
 
-  openproject:
-    image: openproject/openproject:15
-    container_name: openproject
-    restart: unless-stopped
-    ports:
-      - "8082:8080"
-    environment:
-      - OPENPROJECT_HOST__NAME=localhost:8082
-      - OPENPROJECT_HTTPS=false
-      - OPENPROJECT_DEFAULT__LANGUAGE=ru
-      - OPENPROJECT_RAILS__RELATIVE__URL__ROOT=
-      - OPENPROJECT_PORT=8080
-    volumes:
-      - openproject-pg-data:/var/lib/postgresql/9.6/main
-      - openproject-assets:/var/openproject/assets
-    networks:
-      - default
-
-  xwiki:
-    image: xwiki:stable-postgres-tomcat
-    container_name: xwiki
-    restart: unless-stopped
-    ports:
-      - "8083:8080"
-    environment:
-      - DB_USER=xwiki
-      - DB_PASSWORD=xwiki
-      - DB_DATABASE=xwiki
-      - DB_HOST=postgres
-      - DB_DBMS=postgresql
-    volumes:
-      - xwiki-data:/usr/local/xwiki
-    depends_on:
-      postgres:
-        condition: service_healthy
-    networks:
-      - xwiki-network
-      - default
-
-networks:
-  xwiki-network:
-    driver: bridge
-
+# Warning! docker-compose down looks like remove volumes
 volumes:
   prometheus-volume:
-  openproject-pg-data:
-  openproject-assets:
-  xwiki-data:
