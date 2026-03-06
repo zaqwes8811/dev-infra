@@ -116,7 +116,6 @@ services:
       retries: 5
     networks:
       - default
-      - xwiki-network
 
   openproject:
     image: openproject/openproject:15 #user/password by default admin/admin
@@ -157,7 +156,6 @@ services:
       postgres:
         condition: service_healthy
     networks:
-      - xwiki-network
       - default
 
       # Got to db and create user, password and db for XWiki
@@ -176,11 +174,6 @@ services:
       # redmine=# GRANT ALL PRIVILEGES ON DATABASE xwiki TO xwiki;
       # GRANT
       # redmine=# 
-
-
-networks:
-  xwiki-network:
-    driver: bridge
 
 # Warning! docker-compose down looks like remove volumes
 volumes:
