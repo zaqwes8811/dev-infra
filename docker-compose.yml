@@ -97,7 +97,8 @@ services:
     ports:
         - "3001:3000"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     logging:
       driver: "journald"
 
@@ -108,7 +109,75 @@ services:
     env_file: creds/creds.env
     volumes:
       - /mnt/pseudo_disk_0/redmine-postgresql-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U redmine"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - default
+
+  openproject:
+    image: openproject/openproject:15 #user/password by default admin/admin
+    container_name: openproject
+    restart: unless-stopped
+    ports:
+      - "8082:8080"
+    environment:
+      - OPENPROJECT_HOST__NAME=localhost:8082
+      - OPENPROJECT_HTTPS=false
+      - OPENPROJECT_DEFAULT__LANGUAGE=ru
+      - OPENPROJECT_RAILS__RELATIVE__URL__ROOT=
+      - OPENPROJECT_PORT=8080
+    volumes:
+      - openproject-pg-data:/var/lib/postgresql/9.6/main
+      - openproject-assets:/var/openproject/assets
+    networks:
+      - default
+
+# The administration application is not installed. Since XWiki Enterprise 1.5, the Administration is distributed as an application. 
+# You can download it from http://extensions.xwiki.org/xwiki/bin/view/Extension/Administration+Application.
+
+  xwiki:
+    image: xwiki:stable-postgres-tomcat
+    container_name: xwiki
+    restart: unless-stopped
+    ports:
+      - "8083:8080"
+    environment:
+      - DB_USER=xwiki
+      - DB_PASSWORD=xwiki
+      - DB_DATABASE=xwiki
+      - DB_HOST=postgres
+      - DB_DBMS=postgresql
+    volumes:
+      - xwiki-data:/usr/local/xwiki
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - default
+
+      # Got to db and create user, password and db for XWiki
+      # From host and `dev-infra` folder
+      # docker exec -it postgres bash
+      # root@4afe81541434:/# su postgres
+      # postgres@4afe81541434:/$ psql
+      # postgres@4afe81541434:/$ psql -U redmine
+      # psql (17.2 (Debian 17.2-1.pgdg120+1))
+      # Type "help" for help.
+
+      # redmine=# CREATE USER xwiki WITH PASSWORD 'xwiki';
+      # CREATE ROLE
+      # redmine=# CREATE DATABASE xwiki;
+      # CREATE DATABASE
+      # redmine=# GRANT ALL PRIVILEGES ON DATABASE xwiki TO xwiki;
+      # GRANT
+      # redmine=# 
 
 # Warning! docker-compose down looks like remove volumes
 volumes:
   prometheus-volume:
+  openproject-pg-data:
+  openproject-assets:
+  xwiki-data:
